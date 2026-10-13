@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NRI Property Sale Checker | Capital Gains, TDS Gap & FEMA Repatriation</title>
+  <meta name="description" content="Calculate Indian capital gains tax, Section 395 Form 128 TDS gap, Form 141 Schedule E filing, and FEMA USD 1M repatriation for Non-Resident Indians selling property in India.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Global Top Bar -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <a href="https://hemanthnarra.in" target="_blank" class="nav-logo">Hemanth<span> Narra</span></a>
+        <span class="nav-slash">/</span>
+        <div class="brand-text">
+          <span class="brand-title">NRI Property Sale Checker</span>
+          <span class="brand-sub">Income-tax Act, 2025 · FEMA Engine</span>
+        </div>
+      </div>
+      <div class="topbar-meta">
+        <span class="status-badge pulse-dot">
+          <span class="dot"></span>
+          Rules Updated: <strong id="topbar-verified-date">10 Oct 2026</strong>
+        </span>
+        <span class="law-badge" id="topbar-law-badge">Act 2025 Active (from 1 Apr 2026)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs-wrapper">
+    <div class="container tabs-container">
+      <button class="nav-tab active" id="tab-btn-seller" onclick="switchMainTab('seller')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        I Am Selling Property (NRI Seller Flow)
+      </button>
+      <button class="nav-tab" id="tab-btn-buyer" onclick="switchMainTab('buyer')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        I Am Buying from an NRI (Buyer TDS Guide)
+      </button>
+      <button class="nav-tab" id="tab-btn-about" onclick="switchMainTab('about')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        About & Law Concordance
+      </button>
+    </div>
+  </nav>
+
+  <main class="container main-content">
+    
+    <!-- ============================================================== -->
+    <!-- TAB 1: SELLER FLOW                                             -->
+    <!-- ============================================================== -->
+    <div id="tab-seller-content" class="tab-pane active">
+      
+      <!-- HERO SECTION -->
+      <section class="hero-card" id="hero-section">
+        <div class="hero-content">
+          <div class="gold-pill">Tax Year 2026-27 & CBDT Notification 121/2026 Ready</div>
+          <h1>Don’t Let the Buyer Lock Up <span class="highlight-gold">14.95%</span> of Your Entire Property Sale</h1>
+          <p class="hero-desc">
+            In India, buyers paying an NRI must withhold TDS on the <strong>total sale price</strong>, not the gain. 
+            On a ₹1.2 Cr sale, ₹17.9L is withheld against only ₹7.7L of actual tax. 
+            Calculate your true liability, the TDS gap, Form 128 lower-deduction path, and USD 1M repatriation in 2 minutes.
+          </p>
+          <div class="hero-metrics">
+            <div class="metric-pill">
+              <span class="m-val">12.5%</span>
+              <span class="m-lbl">New LTCG Rate</span>
+            </div>
+            <div class="metric-pill">
+              <span class="m-val">Form 141 (Sch E)</span>
+              <span class="m-lbl">PAN-Based Buyer Filing</span>
+            </div>
+            <div class="metric-pill">
+              <span class="m-val">$1,000,000</span>
+              <span class="m-lbl">Annual NRO Repatriation</span>
+            </div>
+            <div class="metric-pill">
+              <span class="m-val">Zero AI Cost</span>
+              <span class="m-lbl">Deterministic Engine</span>
+            </div>
+          </div>
+          <div class="hero-actions">
+            <button class="btn btn-primary btn-lg" onclick="startCheckFlow()">
+              Start Calculation Check
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button class="btn btn-secondary btn-lg" onclick="loadWorkedExample()">
+              Load ₹1.2 Cr Worked Example
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4-QUESTION QUALIFIER -->
+      <section class="card flow-card hidden" id="qualifier-section">
+        <div class="card-header">
+          <div class="step-badge">Step 1 of 2</div>
+          <h2>Eligibility Qualifier (4 Quick Questions)</h2>
+          <p class="subtext">Routes you to the correct legal framework under Income-tax Act, 2025 vs 1961 Act.</p>
+        </div>
+
+        <div class="qualifier-grid">
+          <!-- Question 1 -->
+          <div class="form-group">
+            <label class="form-label" for="q-res-status">
+              1. Residential Status under Indian Tax Law
+              <span class="info-tooltip" title="Non-resident test: Less than 182 days in India, or less than 60 days if visiting.">ℹ️</span>
+            </label>
+            <select class="form-select" id="q-res-status" onchange="checkQualifierGates()">
+              <option value="non_resident">Non-Resident Indian (NRI / OCI / Foreign Citizen)</option>
+              <option value="resident">Resident Indian (Lived in India > 182 days)</option>
+              <option value="rnor">Resident but Not Ordinarily Resident (RNOR)</option>
+              <option value="uncertain">Not Sure / Uncertain</option>
+            </select>
+            <span class="helper-text">Must be Non-Resident to proceed with NRI provisions.</span>
+          </div>
+
+          <!-- Question 2 -->
+          <div class="form-group">
+            <label class="form-label" for="q-prop-type">
+              2. Nature of Immovable Property
+            </label>
+            <select class="form-select" id="q-prop-type" onchange="checkQualifierGates()">
+              <option value="residential">Residential Apartment / House / Villa</option>
+              <option value="plot">Residential or Commercial Plot of Land</option>
+              <option value="commercial">Commercial Office / Retail / Warehouse</option>
+              <option value="agricultural">Agricultural Land / Plantation / Farmhouse</option>
+            </select>
+            <span class="helper-text">Agricultural property is subject to strict FEMA prohibitions for NRIs.</span>
+          </div>
+
+          <!-- Question 3 -->
+          <div class="form-group">
+            <label class="form-label" for="q-transfer-date">
+              3. Proposed / Actual Date of Transfer (Sale Deed)
+            </label>
+            <input type="date" class="form-input" id="q-transfer-date" value="2026-10-15" onchange="checkQualifierGates()">
+            <span class="helper-text">Before 1 Apr 2026 uses 1961 Act; on or after uses 2025 Act. After 1 Oct 2026 enables Form 141 Sch E.</span>
+          </div>
+
+          <!-- Question 4 -->
+          <div class="form-group">
+            <label class="form-label" for="q-acq-mode">
+              4. Mode of Acquisition
+            </label>
+            <select class="form-select" id="q-acq-mode">
+              <option value="purchase">Direct Purchase (Self-funded)</option>
+              <option value="inheritance">Inherited Property (Cost & date of previous owner apply)</option>
+              <option value="gift">Gifted Property (Cost & date of donor apply)</option>
+            </select>
+            <span class="helper-text">For inheritance/gift, holding period counts from previous owner.</span>
+          </div>
+        </div>
+
+        <!-- Qualifier Stop Alerts (Rendered dynamically if disqualified) -->
+        <div id="qualifier-stop-alert" class="alert-box alert-danger hidden">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-body">
+            <h4 id="stop-alert-title">Calculation Stopped</h4>
+            <p id="stop-alert-message"></p>
+            <a href="https://incometaxindia.gov.in" target="_blank" class="btn btn-outline btn-sm" id="stop-alert-btn">Check Official Income Tax Guidance</a>
+          </div>
+        </div>
+
+        <div class="card-footer" id="qualifier-footer">
+          <button class="btn btn-primary" onclick="proceedToDetailsForm()">
+            Continue to Property Details
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- DETAILS INPUT FORM -->
+      <section class="card flow-card hidden" id="details-section">
+        <div class="card-header flex-between">
+          <div>
+            <div class="step-badge">Step 2 of 2</div>
+            <h2>Transaction & Financial Details</h2>
+            <p class="subtext">Enter figures in Indian Rupees (₹). Co-owners are taxed independently.</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="editQualifier()">← Back to Qualifier</button>
+        </div>
+
+        <div class="form-sections">
+          
+          <!-- Block 1: Consideration & Stamp Duty Value -->
+          <div class="form-block">
+            <h3 class="block-title">
+              <span class="b-num">1</span>
+              Sale Consideration & Stamp Duty Value
+            </h3>
+            <div class="form-row cols-2">
+              <div class="form-group">
+                <label class="form-label" for="inp-sale-price">
+                  Agreed Sale Consideration (₹)
+                  <span class="req">*</span>
+                </label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">₹</span>
+                  <input type="number" class="form-input" id="inp-sale-price" value="12000000" placeholder="1,20,00,000" oninput="liveUpdateCalculations()">
+                </div>
+                <span class="helper-text" id="lbl-sale-price-words">₹ 1.20 Crore</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inp-sdv">
+                  Stamp Duty Value / Circle Rate (₹)
+                  <span class="req">*</span>
+                </label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">₹</span>
+                  <input type="number" class="form-input" id="inp-sdv" value="12200000" placeholder="1,22,00,000" oninput="liveUpdateCalculations()">
+                </div>
+                <div class="sdv-badge-wrap">
+                  <span class="sdv-status-badge badge-green" id="sdv-safeharbour-badge">Within 110% Safe Harbour (No Deeming)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row cols-2">
+              <div class="form-group">
+                <label class="form-label" for="inp-ownership">
+                  Your Ownership Share (%)
+                </label>
+                <div class="input-prefix-wrap">
+                  <input type="number" class="form-input" id="inp-ownership" value="100" min="1" max="100" oninput="liveUpdateCalculations()">
+                  <span class="input-suffix">%</span>
+                </div>
+                <span class="helper-text">If property is co-owned, calculations compute your proportionate share.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inp-buyer-type">
+                  Buyer Entity Category
+                </label>
+                <select class="form-select" id="inp-buyer-type" onchange="liveUpdateCalculations()">
+                  <option value="resident_individual_huf">Resident Individual or HUF (PAN-based Form 141)</option>
+                  <option value="company_llp_firm">Company / LLP / Partnership Firm (TAN Form 144)</option>
+                  <option value="non_resident">Non-Resident Buyer</option>
+                </select>
+                <span class="helper-text">Determines whether buyer needs TAN or can file via PAN.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Block 2: Cost & Improvements -->
+          <div class="form-block">
+            <h3 class="block-title">
+              <span class="b-num">2</span>
+              Acquisition Costs & Permitted Deductions
+            </h3>
+            <div class="form-row cols-2">
+              <div class="form-group">
+                <label class="form-label" for="inp-acq-date">
+                  Original Date of Acquisition
+                </label>
+                <input type="date" class="form-input" id="inp-acq-date" value="2016-04-10" onchange="liveUpdateCalculations()">
+                <span class="helper-text" id="holding-period-indicator">Holding: 126 months (Long-Term Capital Asset)</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inp-cost-acq">
+                  Cost of Acquisition (₹)
+                  <span class="req">*</span>
+                </label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">₹</span>
+                  <input type="number" class="form-input" id="inp-cost-acq" value="6000000" placeholder="60,00,000" oninput="liveUpdateCalculations()">
+                </div>
+                <span class="helper-text">Original purchase price + stamp duty + registration charges paid.</span>
+              </div>
+            </div>
+
+            <div class="form-row cols-2">
+              <div class="form-group">
+                <label class="form-label" for="inp-cost-improv">
+                  Cost of Improvement / Renovation (₹)
+                </label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">₹</span>
+                  <input type="number" class="form-input" id="inp-cost-improv" value="500000" placeholder="5,00,000" oninput="liveUpdateCalculations()">
+                </div>
+                <span class="helper-text">Capital additions/renovations backed by bills.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inp-expenses">
+                  Transfer Expenses & Brokerage (₹)
+                </label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">₹</span>
+                  <input type="number" class="form-input" id="inp-expenses" value="120000" placeholder="1,20,000" oninput="liveUpdateCalculations()">
+                </div>
+                <span class="helper-text">Brokerage, advocate charges directly connected to sale.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Block 3: Income & FEMA Repatriation Settings -->
+          <div class="form-block">
+            <h3 class="block-title">
+              <span class="b-num">3</span>
+              Indian Income & Repatriation Channel
+            </h3>
+            <div class="form-row cols-3">
+              <div class="form-group">
+                <label class="form-label" for="inp-other-income">
+                  Other Taxable Indian Income in FY (₹)
+                </label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">₹</span>
+                  <input type="number" class="form-input" id="inp-other-income" value="0" placeholder="0" oninput="liveUpdateCalculations()">
+                </div>
+                <span class="helper-text">Rent, interest, etc. (for surcharge bracket).</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inp-pan-avail">
+                  Do You Have a Valid Indian PAN?
+                </label>
+                <select class="form-select" id="inp-pan-avail" onchange="liveUpdateCalculations()">
+                  <option value="true">Yes, Valid PAN Available</option>
+                  <option value="false">No PAN (Triggers higher 20% minimum rate)</option>
+                </select>
+                <span class="helper-text">Absence of PAN triggers minimum 20% TDS rate.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="inp-source-funds">
+                  Original Source of Funds
+                </label>
+                <select class="form-select" id="inp-source-funds" onchange="liveUpdateCalculations()">
+                  <option value="nre_fcnr">Foreign Inward Remittance / NRE / FCNR</option>
+                  <option value="nro_rupee">Rupee Funds / NRO Account</option>
+                  <option value="acquired_resident">Acquired while Indian Resident</option>
+                  <option value="inherited">Inherited Asset</option>
+                </select>
+                <span class="helper-text">Sets FEMA outward remittance channel.</span>
+              </div>
+            </div>
+
+            <div class="form-row cols-2" id="wrap-remittance-usd">
+              <div class="form-group">
+                <label class="form-label" for="inp-fy-remittance-usd">
+                  NRO Remittances Already Sent Abroad in Current FY (USD $)
+                </label>
+                <div class="input-prefix-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="inp-fy-remittance-usd" value="0" placeholder="0" oninput="liveUpdateCalculations()">
+                </div>
+                <span class="helper-text">Used to compute remaining headroom under $1M USD scheme.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card-footer flex-between">
+          <button class="btn btn-ghost" onclick="resetDefaults()">Reset to Defaults</button>
+          <button class="btn btn-primary btn-lg" onclick="executeFullCalculation()">
+            Compute Tax, TDS Exposure & Gap
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- RESULTS SECTION -->
+      <section class="results-wrapper hidden" id="results-section">
+        
+        <!-- TOP CALLOUT: THE TDS GAP -->
+        <div class="gap-banner" id="gap-banner">
+          <div class="gap-icon">💰</div>
+          <div class="gap-body">
+            <div class="gap-label">POTENTIAL TDS OVER-WITHHOLDING (THE GAP)</div>
+            <div class="gap-amount" id="res-gap-amount">₹ 10,24,660</div>
+            <p class="gap-explanation" id="res-gap-explanation">
+              The buyer will withhold <strong>₹ 17,94,000</strong> unless you produce a Lower Deduction Certificate. 
+              Your actual liability is only <strong>₹ 7,69,340</strong>. You can protect <strong>₹ 10,24,660</strong> from being locked until refund.
+            </p>
+          </div>
+          <div class="gap-action">
+            <button class="btn btn-gold btn-sm" onclick="scrollToCertificateRoadmap()">
+              View Form 128 Path
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 CORE METRIC CARDS -->
+        <div class="metrics-grid">
+          
+          <div class="m-card">
+            <div class="m-head">
+              <span>Capital Gain</span>
+              <span class="badge" id="res-gain-nature">Long-Term (12.5%)</span>
+            </div>
+            <div class="m-value" id="res-gain-value">₹ 53,80,000</div>
+            <div class="m-sub" id="res-gain-sub">Full Value: ₹ 1.20 Cr - Deductions: ₹ 66.20L</div>
+          </div>
+
+          <div class="m-card highlight-card">
+            <div class="m-head">
+              <span>Actual Tax Liability</span>
+              <span class="badge badge-teal" id="res-tax-effective-rate">14.3% Effective</span>
+            </div>
+            <div class="m-value green-val" id="res-tax-value">₹ 7,69,340</div>
+            <div class="m-sub" id="res-tax-sub">Tax: ₹6.72L + Surcharge: ₹67.2K + Cess: ₹29.5K</div>
+          </div>
+
+          <div class="m-card danger-card">
+            <div class="m-head">
+              <span>Buyer TDS (Without Certificate)</span>
+              <span class="badge badge-red" id="res-tds-rate">14.95% on Gross Price</span>
+            </div>
+            <div class="m-value red-val" id="res-tds-value">₹ 17,94,000</div>
+            <div class="m-sub" id="res-tds-sub">Deducted on total price of ₹ 1.20 Cr, not on gain</div>
+          </div>
+
+          <div class="m-card certificate-card">
+            <div class="m-head">
+              <span>Certificate Target TDS Rate</span>
+              <span class="badge badge-gold" id="res-cert-form-badge">Form 128 / s.395</span>
+            </div>
+            <div class="m-value gold-val" id="res-cert-rate">6.41%</div>
+            <div class="m-sub" id="res-cert-sub">TDS matches actual tax: ₹ 7,69,340</div>
+          </div>
+
+        </div>
+
+        <!-- BUYER COMPLIANCE & FORM SELECTION -->
+        <div class="card subcard">
+          <div class="card-header flex-between">
+            <div class="flex-align-center gap-2">
+              <span class="icon-circle">📋</span>
+              <div>
+                <h3>Buyer TDS Reporting Route & Deadlines</h3>
+                <p class="subtext" id="buyer-compliance-headline">Resident Individual / HUF Buyer Rules</p>
+              </div>
+            </div>
+            <span class="law-badge-sm" id="res-buyer-form-name">Form 141 Schedule E</span>
+          </div>
+          <div class="buyer-route-details" id="buyer-route-details">
+            <div class="route-item">
+              <strong>Reporting Mechanism:</strong>
+              <span id="route-mechanism">PAN-based payment and reporting (No TAN needed)</span>
+            </div>
+            <div class="route-item">
+              <strong>Filing Form:</strong>
+              <span id="route-form">Form 141, Schedule E (e-filing portal)</span>
+            </div>
+            <div class="route-item">
+              <strong>Statutory Deadline:</strong>
+              <span id="route-deadline">Within 30 days from end of month of deduction</span>
+            </div>
+            <div class="route-item">
+              <strong>Payment Code:</strong>
+              <span id="route-code">Code 1057 (TDS on Immovable Property)</span>
+            </div>
+          </div>
+          <div class="alert-box alert-info mt-2">
+            <div class="alert-icon">💡</div>
+            <div class="alert-body">
+              <strong>Why this prevents registrar disputes:</strong> Buyers frequently insist on deducting 1% (which is illegal for NRI sellers) or deducting 14.95% on the spot. Providing this specific form and code ensures both parties are aligned before the registrar appointment.
+            </div>
+          </div>
+        </div>
+
+        <!-- FEMA REPATRIATION HEADROOM BAR -->
+        <div class="card subcard">
+          <div class="card-header">
+            <div class="flex-align-center gap-2">
+              <span class="icon-circle">🌐</span>
+              <div>
+                <h3>FEMA Repatriation & Forex Outward Remittance</h3>
+                <p class="subtext" id="fema-channel-name">NRO Account Scheme (RBI USD 1 Million Scheme)</p>
+              </div>
+            </div>
+          </div>
+          <div class="headroom-container" id="headroom-container">
+            <div class="headroom-labels">
+              <span>Annual Limit: $1,000,000 USD</span>
+              <span id="headroom-balance-lbl">Available Headroom: <strong>$1,000,000 USD</strong></span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="headroom-progress-fill" style="width: 0%;"></div>
+            </div>
+            <p class="repat-notes" id="fema-notes-text">
+              Proceeds from sale are credited to your NRO account. You can repatriate up to USD 1 Million per financial year after taxes using Form 145 & Form 146 CA certificate.
+            </p>
+          </div>
+        </div>
+
+        <!-- ASSUMPTIONS & SOURCE CITATION ACCORDION -->
+        <div class="card subcard">
+          <div class="card-header flex-between" onclick="toggleAssumptionsPanel()" style="cursor: pointer;">
+            <div class="flex-align-center gap-2">
+              <span class="icon-circle">⚖️</span>
+              <div>
+                <h3>Legal Assumptions & Concordance Citations</h3>
+                <p class="subtext">Active Law: <strong id="assumptions-law-title">Income-tax Act, 2025</strong></p>
+              </div>
+            </div>
+            <span id="assumptions-toggle-icon">▼</span>
+          </div>
+          <div class="assumptions-body" id="assumptions-body">
+            <div class="citation-grid" id="citation-grid">
+              <!-- Dynamically rendered -->
+            </div>
+            <div class="disclaimer-callout">
+              <strong>Legal Disclaimer:</strong> Calculations are generated for educational and financial planning purposes based on published provisions of the Income-tax Act, 2025 (and 1961 Act for earlier dates). This does not constitute individualized legal, tax, or FEMA opinion. Always consult your Chartered Accountant before closing transactions.
+            </div>
+          </div>
+        </div>
+
+        <!-- UNLOCK FULL PAID REPORT / DEMO UNLOCK -->
+        <div class="card unlock-card" id="unlock-card">
+          <div class="unlock-header">
+            <div class="unlock-tag">PAID COMPREHENSIVE ADVISORY REPORT</div>
+            <h2>Unlock Complete ₹50 Lakhs Exemption Blueprint & Buyer Letter</h2>
+            <p class="subtext">Everything you need to legally minimize tax, clear FEMA compliance, and give your buyer clear instructions.</p>
+          </div>
+
+          <div class="unlock-features-grid">
+            <div class="u-feat">
+              <span class="u-icon">📄</span>
+              <div>
+                <strong>Formal One-Page Letter to the Buyer</strong>
+                <p>Ready to sign and hand to buyer/broker with exact legal citations to prevent withholding disputes.</p>
+              </div>
+            </div>
+            <div class="u-feat">
+              <span class="u-icon">📉</span>
+              <div>
+                <strong>Section 54EC / 54 / 54F What-If Scenarios</strong>
+                <p>See exactly how investing ₹50L into REC/NHAI bonds saves ₹7.19 Lakhs in taxes, with lock-in rules.</p>
+              </div>
+            </div>
+            <div class="u-feat">
+              <span class="u-icon">📑</span>
+              <div>
+                <strong>Form 128 (Section 395) Application Guide</strong>
+                <p>Step-by-step roadmap to apply on TRACES, documents required, and expected timeline.</p>
+              </div>
+            </div>
+            <div class="u-feat">
+              <span class="u-icon">📥</span>
+              <div>
+                <strong>Download Official PDF Advisory Report</strong>
+                <p>Export a clean, professional multi-page PDF with line-by-line figures and date stamps.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="unlock-actions">
+            <div class="pricing-badge">
+              <span class="price-val">US$ 12</span>
+              <span class="price-inr">or ₹ 999 INR</span>
+              <span class="guarantee">100% Satisfaction or Full Refund</span>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-gold btn-lg" onclick="openPaymentModal()">
+                Unlock Full Report & PDF
+              </button>
+              <button class="btn btn-outline btn-lg" onclick="instantDemoUnlock()">
+                ⚡ Instant Unlock (Evaluation Mode)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNLOCKED SECTION (RENDERED UPON PURCHASE OR DEMO UNLOCK) -->
+        <div class="unlocked-content hidden" id="unlocked-content">
+          
+          <!-- UNLOCKED BANNER -->
+          <div class="unlocked-success-bar">
+            <span>🎉 <strong>Full Report Unlocked</strong> — Complete Advisory Blueprint Available</span>
+            <button class="btn btn-sm btn-gold" onclick="downloadPdfReport()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download PDF Report
+            </button>
+          </div>
+
+          <!-- SECTION 54EC / 54 WHAT-IF BREAKDOWN -->
+          <div class="card subcard">
+            <div class="card-header">
+              <div class="flex-align-center gap-2">
+                <span class="icon-circle">🛡️</span>
+                <div>
+                  <h3>Exemption Scenarios & Tax Savings</h3>
+                  <p class="subtext">How to legally drop your tax liability from ₹7.69 Lakhs to ₹49,400</p>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="report-table" id="exemptions-table">
+                <thead>
+                  <tr>
+                    <th>Exemption Clause</th>
+                    <th>Investment Asset</th>
+                    <th>Max Cap</th>
+                    <th>Timing & Lock-in</th>
+                    <th>Modeled Investment</th>
+                    <th>New Tax</th>
+                    <th>Tax Saved</th>
+                  </tr>
+                </thead>
+                <tbody id="exemptions-table-body">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- READY-TO-COPY BUYER LETTER -->
+          <div class="card subcard">
+            <div class="card-header flex-between">
+              <div class="flex-align-center gap-2">
+                <span class="icon-circle">✉️</span>
+                <div>
+                  <h3>Official Instruction Letter to Buyer</h3>
+                  <p class="subtext">Ready to print or email to the purchaser and their registration advocate</p>
+                </div>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="copyBuyerLetter()">
+                📋 Copy Letter to Clipboard
+              </button>
+            </div>
+            <div class="buyer-letter-box" id="buyer-letter-box">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- LOWER DEDUCTION CERTIFICATE ROADMAP -->
+          <div class="card subcard" id="certificate-roadmap-card">
+            <div class="card-header">
+              <div class="flex-align-center gap-2">
+                <span class="icon-circle">🏛️</span>
+                <div>
+                  <h3>Section 395 (Form 128) Lower Deduction Certificate Roadmap</h3>
+                  <p class="subtext">Step-by-step procedure to eliminate buyer TDS withholding</p>
+                </div>
+              </div>
+            </div>
+            <div class="timeline-steps" id="timeline-steps">
+              <!-- Dynamically rendered -->
+            </div>
+          </div>
+
+          <!-- DOCUMENT CHECKLIST -->
+          <div class="card subcard">
+            <div class="card-header">
+              <div class="flex-align-center gap-2">
+                <span class="icon-circle">📂</span>
+                <div>
+                  <h3>Complete Document Verification Checklist</h3>
+                  <p class="subtext">Keep these ready before drafting agreement to sell</p>
+                </div>
+              </div>
+            </div>
+            <div class="checklist-grid" id="checklist-grid">
+              <!-- Dynamically rendered -->
+            </div>
+          </div>
+
+          <!-- CONSULTATION UPSELL / CA PARTNER -->
+          <div class="card ca-consult-card">
+            <div class="ca-content">
+              <span class="gold-pill">Professional Execution Service</span>
+              <h2>Need Form 128 Lower Deduction or Form 146 CA Certificate Handled?</h2>
+              <p>
+                Our partner Chartered Accountant firm specializes in NRI cross-border tax compliance, TRACES filings, Form 146 (15CB) certification, and FEMA repatriation clearances.
+              </p>
+              <div class="ca-contact-strip">
+                <div><strong>Founder:</strong> Hemanth Kumar Narra (ITR · GST · ROC · Trademarks · Advisory)</div>
+                <div><strong>Call / WhatsApp:</strong> <a href="https://wa.me/918919712297" target="_blank">+91 8919712297</a></div>
+                <div><strong>Website:</strong> <a href="https://hemanthnarra.in" target="_blank">hemanthnarra.in</a></div>
+              </div>
+              <div class="mt-2">
+                <a href="https://wa.me/918919712297?text=Hello%20Hemanth,%20I%20used%20the%20NRI%20Property%20Sale%20Checker%20and%20would%20like%20assistance%20with%20Lower%20Deduction%20Certificate%20and%20CA%20certification." target="_blank" class="btn btn-gold">
+                  Book CA Consultation on WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 2: BUYER-SIDE CHECKER (THE HOOK)                           -->
+    <!-- ============================================================== -->
+    <div id="tab-buyer-content" class="tab-pane">
+      <section class="card flow-card">
+        <div class="card-header">
+          <div class="gold-pill">Free Buyer-Side Compliance Checker</div>
+          <h2>I Am Buying Property from an NRI: What Do I Deduct & How Do I Pay?</h2>
+          <p class="subtext">
+            Buyers are personally liable if TDS is deducted incorrectly or deposited late. 
+            Avoid the common 1% mistake and penalties of ₹200/day plus interest.
+          </p>
+        </div>
+
+        <div class="buyer-checker-form">
+          <div class="form-row cols-2">
+            <div class="form-group">
+              <label class="form-label" for="bc-price">Agreed Purchase Consideration (₹)</label>
+              <div class="input-prefix-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" class="form-input" id="bc-price" value="12000000" oninput="runBuyerChecker()">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bc-transfer-date">Date of Agreement / Payment</label>
+              <input type="date" class="form-input" id="bc-transfer-date" value="2026-10-15" onchange="runBuyerChecker()">
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="form-group">
+              <label class="form-label" for="bc-buyer-entity">Your Entity Type</label>
+              <select class="form-select" id="bc-buyer-entity" onchange="runBuyerChecker()">
+                <option value="individual_huf">Resident Individual or HUF</option>
+                <option value="company_firm">Company / LLP / Partnership Firm</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bc-has-cert">Does Seller Have a Lower Deduction Certificate?</label>
+              <select class="form-select" id="bc-has-cert" onchange="runBuyerChecker()">
+                <option value="no">No Certificate (Must deduct statutory rate)</option>
+                <option value="yes">Yes, Seller Has Certificate (Section 395 / Form 128)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row cols-1 hidden" id="bc-cert-rate-wrap">
+            <div class="form-group">
+              <label class="form-label" for="bc-cert-rate">Certificate Prescribed Rate (%)</label>
+              <div class="input-prefix-wrap">
+                <input type="number" class="form-input" id="bc-cert-rate" value="6.41" step="0.01" oninput="runBuyerChecker()">
+                <span class="input-suffix">%</span>
+              </div>
+              <span class="helper-text">Enter rate exactly as specified in the Assessing Officer's certificate.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="buyer-checker-result" id="buyer-checker-result">
+          <!-- Dynamically populated result -->
+        </div>
+      </section>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- TAB 3: ABOUT & LAW CONCORDANCE                                 -->
+    <!-- ============================================================== -->
+    <div id="tab-about-content" class="tab-pane">
+      <section class="card flow-card">
+        <div class="card-header">
+          <div class="gold-pill">Legal Blueprint Concordance</div>
+          <h2>Income-tax Act, 1961 vs Income-tax Act, 2025 Concordance Table</h2>
+          <p class="subtext">
+            On 1 April 2026, the Income-tax Act, 2025 replaced the 1961 Act. 
+            On 1 October 2026, CBDT Notification 121/2026 introduced Form 141 Schedule E. 
+            Here is the exact section mapping used by this calculation engine.
+          </p>
+        </div>
+
+        <div class="table-responsive">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>1961 Act Provision</th>
+                <th>2025 Act / Rules 2026</th>
+                <th>Confidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>TDS on Property Sale by Non-Resident</strong></td>
+                <td>Section 195</td>
+                <td><strong class="highlight-gold">Section 393(2), Sl. 17 (Code 1057)</strong></td>
+                <td><span class="badge badge-teal">High</span></td>
+              </tr>
+              <tr>
+                <td><strong>Lower or Nil Deduction Certificate</strong></td>
+                <td>Section 197 / Form 13</td>
+                <td><strong class="highlight-gold">Section 395 / Form 128</strong></td>
+                <td><span class="badge badge-teal">High</span></td>
+              </tr>
+              <tr>
+                <td><strong>Resident Buyer TDS Filing (No TAN)</strong></td>
+                <td>Section 194-IA / Form 26QB</td>
+                <td><strong class="highlight-gold">Form 141 Schedule E (CBDT 121/2026)</strong></td>
+                <td><span class="badge badge-teal">High</span></td>
+              </tr>
+              <tr>
+                <td><strong>Foreign Remittance Declaration / CA Cert</strong></td>
+                <td>Form 15CA / Form 15CB</td>
+                <td><strong class="highlight-gold">Form 145 / Form 146</strong></td>
+                <td><span class="badge badge-teal">High</span></td>
+              </tr>
+              <tr>
+                <td><strong>LTCG Property Flat Rate (12.5%)</strong></td>
+                <td>Section 112</td>
+                <td><strong class="highlight-gold">Section 197(1)(b)</strong></td>
+                <td><span class="badge badge-teal">Verified</span></td>
+              </tr>
+              <tr>
+                <td><strong>House-to-House Exemption (s.54)</strong></td>
+                <td>Section 54 (₹10 Cr cap)</td>
+                <td><strong class="highlight-gold">Section 82</strong></td>
+                <td><span class="badge badge-teal">High</span></td>
+              </tr>
+              <tr>
+                <td><strong>Capital Gains Bonds (s.54EC)</strong></td>
+                <td>Section 54EC (₹50 Lakh cap)</td>
+                <td><strong class="highlight-gold">Section 85</strong></td>
+                <td><span class="badge badge-teal">High</span></td>
+              </tr>
+              <tr>
+                <td><strong>Other Asset to House (s.54F)</strong></td>
+                <td>Section 54F (₹10 Cr cap)</td>
+                <td><strong class="highlight-gold">Section 86</strong></td>
+                <td><span class="badge badge-teal">High</span></td>
+              </tr>
+              <tr>
+                <td><strong>Stamp Duty Safe Harbour (110%)</strong></td>
+                <td>Section 50C</td>
+                <td><strong class="highlight-gold">Section 50C equivalent</strong></td>
+                <td><span class="badge badge-teal">Verified</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="founder-card mt-3">
+          <div class="founder-info">
+            <h3>Engine Architecture & Maintainer</h3>
+            <p>
+              Built by <strong>Hemanth Kumar Narra</strong> (ITR · GST · ROC · Trademarks · Startup Advisory). 
+              Engineered with pure Python deterministic calculation functions reading versioned JSON rules, 
+              ensuring zero per-use LLM costs and zero hallucinations.
+            </p>
+            <p>
+              Contact: <strong>+91 8919712297</strong> | <a href="https://hemanthnarra.in" target="_blank">hemanthnarra.in</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- PAYMENT CHECKOUT MODAL -->
+  <div class="modal-backdrop hidden" id="payment-modal">
+    <div class="modal-card">
+      <div class="modal-header flex-between">
+        <h3>Unlock Full Advisory Report</h3>
+        <button class="btn-close" onclick="closePaymentModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          Get complete line-by-line calculations, Section 54EC savings models, 
+          the 1-page Buyer Instruction Letter, and instant PDF download.
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="checkout-email">Your Email Address (for report delivery)</label>
+          <input type="email" class="form-input" id="checkout-email" placeholder="nri.investor@example.com" value="nri.seller@example.com">
+        </div>
+        <div class="price-callout">
+          <div class="price-tag">US$ 12.00 / ₹ 999.00</div>
+          <span class="subtext">Secure payment processed via Merchant of Record (Paddle / Razorpay)</span>
+        </div>
+      </div>
+      <div class="modal-footer flex-between">
+        <button class="btn btn-ghost" onclick="closePaymentModal()">Cancel</button>
+        <button class="btn btn-gold" onclick="submitSimulationPayment()">
+          Complete Order & Unlock Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer id="contact" class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-cta">
+        <h2>Ready to get started?</h2>
+        <p>Let's sort out whatever's on your plate.</p>
+        <a href="https://wa.me/918919712297?text=Hello%20Hemanth,%20I%20am%20using%20the%20NRI%20Property%20Sale%20Checker." target="_blank" class="footer-btn">Connect on WhatsApp</a>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Main Site</h4>
+          <a href="https://hemanthnarra.in" target="_blank">Home</a>
+          <a href="https://hemanthnarra.in#services" target="_blank">Services</a>
+          <a href="https://hemanthnarra.in/blog/index.html" target="_blank">Blog</a>
+          <a href="https://hemanthnarra.in#contact" target="_blank">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Follow Along</h4>
+          <div class="social-links">
+            <a href="https://www.instagram.com/hemanthnarrax/" target="_blank" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="https://x.com/HemanthnarraX" target="_blank" aria-label="X (Twitter)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Hemanth Narra. All rights reserved. Information and planning tool only. Not tax, legal or FEMA advice.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

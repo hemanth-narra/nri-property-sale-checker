@@ -1,0 +1,16 @@
+# Caddy reverse proxy configuration
+# Replace :80 with your domain (e.g. nri.hemanthnarra.in) when deploying with SSL
+
+:80 {
+    reverse_proxy app:8000
+
+    # Compression
+    encode gzip zstd
+
+    # Security headers
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+}

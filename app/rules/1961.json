@@ -1,0 +1,92 @@
+{
+  "version": "1961",
+  "effective_to": "2026-03-31",
+  "last_verified": "2026-10-10",
+  "law_name": "Income-tax Act, 1961",
+  "ltcg_property": {
+    "rate": 0.125,
+    "indexation_nri": false,
+    "section_new": "112",
+    "section_old": "112",
+    "source_url": "https://incometaxindia.gov.in"
+  },
+  "stcg_property": {
+    "slab_rate_default": 0.30,
+    "section_new": "Normal Slabs",
+    "section_old": "Normal Slabs",
+    "verify_note": "Taxed at slab rates for non-residents (no 87A rebate)."
+  },
+  "holding_months_long_term": 24,
+  "sdv_tolerance": 1.10,
+  "sdv_section": {
+    "section_new": "50C",
+    "section_old": "50C"
+  },
+  "cess": 0.04,
+  "surcharge": {
+    "bands": [
+      [5000000, 0.10],
+      [10000000, 0.15]
+    ],
+    "ltcg_cap": 0.15,
+    "marginal_relief": true
+  },
+  "tds": {
+    "section_new": "195",
+    "section_old": "195",
+    "code": "1057",
+    "no_pan_min_rate": 0.20,
+    "pan_based_form_from": null,
+    "form_individual_huf": "27Q",
+    "form_other": "27Q",
+    "form_old": "27Q",
+    "cbdt_notification": null
+  },
+  "lower_deduction": {
+    "section_new": "197",
+    "section_old": "197",
+    "form_new": "Form 13",
+    "form_old": "Form 13"
+  },
+  "remittance": {
+    "form_declaration_new": "Form 15CA",
+    "form_declaration_old": "Form 15CA",
+    "form_ca_cert_new": "Form 15CB",
+    "form_ca_cert_old": "Form 15CB"
+  },
+  "exemptions": {
+    "s82": {
+      "code": "54",
+      "name": "Residential house to residential house",
+      "section_new": "54",
+      "section_old": "54",
+      "cap": 100000000,
+      "lockin_years": 3,
+      "timing_rule": "Purchase 1 year before or 2 years after transfer, or construct within 3 years."
+    },
+    "s85": {
+      "code": "54EC",
+      "name": "Capital Gains Bonds (NHAI, REC, PFC, IRFC)",
+      "section_new": "54EC",
+      "section_old": "54EC",
+      "cap": 5000000,
+      "months": 6,
+      "lockin_years": 5,
+      "timing_rule": "Invest within 6 months of transfer."
+    },
+    "s86": {
+      "code": "54F",
+      "name": "Other long-term asset to residential house",
+      "section_new": "54F",
+      "section_old": "54F",
+      "cap": 100000000,
+      "lockin_years": 3,
+      "timing_rule": "Purchase 1 year before or 2 years after transfer, or construct within 3 years. Reinvest full net consideration for full relief."
+    }
+  },
+  "fema": {
+    "nro_annual_limit_usd": 1000000,
+    "foreign_funds_description": "Repatriable up to foreign exchange originally remitted in (up to 2 residential properties)."
+  },
+  "verify_flags": []
+}
